@@ -58,6 +58,12 @@ public class CalculSwing extends JFrame {
 		return txtFieldStr;
 	}
 
+	public void txtFieldEndAppend(double calResult) {
+		// = 버튼 눌렀을 때 최종적으로 결과값을 딱 붙임
+		String currentText = "" + calResult;
+		calculResult.setText(currentText);
+	}
+
 	/***** 버튼 활성화 비활성화 *****/
 	// 기호 하나를 선택하면 다른 계산 기호들까지 다 비활성화
 	// 아직 두 가지 수에 대한 연산만 가능한 코드이므로 기호가 여러개가 필요 없음
@@ -68,6 +74,11 @@ public class CalculSwing extends JFrame {
 		calculNumsBtn14.setEnabled(false);
 	}
 	
+	// 하나의 버튼 비활성화 or 활성화 : 나누기 기호를 누른 다음에는 숫자 0을 누르지 못한다 
+	public void oneBtnUnabled(JButton btn, boolean enabled) {
+		btn.setEnabled(enabled);
+	}
+
 	// 계산이 한 번 끝나고나면 모든 버튼이 비활성화 됨
 	// 리셋 버튼을 누르면 모든 버튼이 활성화 됨
 	public void btnEnabled(Boolean enabled) {
@@ -92,22 +103,22 @@ public class CalculSwing extends JFrame {
 	/******** 계산 함수 ********/
 	// 기본적으로 모든 수를 더블로 가정
 	public double doubleTypeCheck(String input) {
-        if (input == null || input.isEmpty()) {
-            throw new IllegalArgumentException("입력 문자열이 유효하지 않습니다.");
-        }
+		if (input == null || input.isEmpty()) {
+			throw new IllegalArgumentException("입력 문자열이 유효하지 않습니다.");
+		}
 
-        // 문자열에 소수점이 있는지 검사
-        if (input.contains(".")) {
-            try {
-                // 문자열을 double로 변환
-                return Double.parseDouble(input);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("유효한 double로 변환할 수 없는 문자열입니다.");
-            }
-        } else {
-        	return Double.parseDouble(input);
-        }
-    }
+		// 문자열에 소수점이 있는지 검사
+		if (input.contains(".")) {
+			try {
+				// 문자열을 double로 변환
+				return Double.parseDouble(input);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("유효한 double로 변환할 수 없는 문자열입니다.");
+			}
+		} else {
+			return Double.parseDouble(input);
+		}
+	}
 
 	public double plus(double part1, double part2) {
 		return part1 + part2;
@@ -144,10 +155,7 @@ public class CalculSwing extends JFrame {
 			double part2 = doubleTypeCheck(parts[1]);
 			double calResult = multiply(part1, part2);
 			System.out.println("part1 * part2 = " + calResult);
-
-			String currentText = calculResult.getText();
-			currentText += calResult;
-			calculResult.setText(currentText);
+			txtFieldEndAppend(calResult);
 		} else if (txtFieldStr.contains(String.valueOf("÷"))) {
 			//System.out.println("÷ 있음!");
 			parts = txtFieldStr.split("÷");
@@ -158,10 +166,7 @@ public class CalculSwing extends JFrame {
 			double part2 = doubleTypeCheck(parts[1]);
 			double calResult = divide(part1, part2);
 			System.out.println("part1 ÷ part2 = " + calResult);
-
-			String currentText = calculResult.getText();
-			currentText += calResult;
-			calculResult.setText(currentText);
+			txtFieldEndAppend(calResult);
 		} else if (txtFieldStr.contains(String.valueOf("-"))) {
 			//System.out.println("- 있음!");
 			parts = txtFieldStr.split("-");
@@ -172,10 +177,7 @@ public class CalculSwing extends JFrame {
 			double part2 = doubleTypeCheck(parts[1]);
 			double calResult = minus(part1, part2);
 			System.out.println("part1 - part2 = " + calResult);
-
-			String currentText = calculResult.getText();
-			currentText += calResult;
-			calculResult.setText(currentText);
+			txtFieldEndAppend(calResult);
 		} else if (txtFieldStr.contains(String.valueOf("+"))) {
 			//System.out.println("+ 있음!");
 			parts = txtFieldStr.split("\\+");
@@ -186,10 +188,7 @@ public class CalculSwing extends JFrame {
 			double part2 = doubleTypeCheck(parts[1]);
 			double calResult = plus(part1, part2);
 			System.out.println("part1 + part2 = " + calResult);
-
-			String currentText = calculResult.getText();
-			currentText += calResult;
-			calculResult.setText(currentText);
+			txtFieldEndAppend(calResult);
 		}
 
 		return result;
@@ -210,8 +209,8 @@ public class CalculSwing extends JFrame {
 
 		/***** NORTH : northPanel*****/
 		calculResult = new JTextField();
-		calculResult.setFont(new Font("Meiryou", Font.BOLD, 32));
-		calculResult.setPreferredSize(new Dimension(600, 60));
+		calculResult.setFont(new Font("Meiryou", Font.BOLD, 21));
+		calculResult.setPreferredSize(new Dimension(380, 60));
 		northPanel.add(calculResult);
 
 		/***** CENTER : centerPanel*****/
@@ -244,7 +243,7 @@ public class CalculSwing extends JFrame {
 		contentPane.add(southPanel, BorderLayout.SOUTH);
 
 		/***** 모든 디자인 코드가 끝난 뒤 마지막에 배치해야 하는 부분 *****/
-		this.setSize(700, 500);
+		this.setSize(400, 550);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 
@@ -276,6 +275,7 @@ public class CalculSwing extends JFrame {
 		calculNumsBtn03.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				txtFieldAppend(e);
+				oneBtnUnabled(calculNumsBtn12, false); // 나누기 버튼 누르고 나면 0은 비활성화
 				btnMarksUnabled();
 			}
 		});
